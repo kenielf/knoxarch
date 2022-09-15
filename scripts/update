@@ -28,12 +28,12 @@ done
 
 # Main
 if [ b_force == true ]; then
-    cd installation_f && git pull && cd -
+    cd $installation_f && git pull && cd -
     yay -Syyuu --noconfirm && \
         paccache -r -k 1 && \
         echo -e "N\nN\n\Y\n" | yay -Scc
 else
-    cd installation_f && git pull && cd -
+    cd $installation_f && git pull && cd -
     yay -Syyuu && \
         paccache -r -k 1 && \
         echo -e "N\nN\n\Y\n" | yay -Scc
