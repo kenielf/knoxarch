@@ -1,18 +1,37 @@
 #!/usr/bin/sh
 # vi: ft=sh
 # By Chrystian "Kenielf"
-VER="0.0.1"
+VER="1.0.0"
 
 # Functions
 usage() {
-    printf "\x1b[2K$0: Version ${VER}\n"
-    printf "Created by Chrystian M. F."
+    printf "\x1b[34m${VER}\x1b[0m: ${0} [--force | -f]\n"
+    printf " --force\tForces the confirmation queries\n"
+    printf "  -f\t\tSame as -f\n"
+    printf "Created by Chrystian M. F.\n"
 }
 
+get_yaycache() {
+    base="$(
+        ls -la "$HOME/.cache/yay" | \
+            grep -vE "completion.cache|vcs.json|\.$" | \
+            tail +2 | awk '{sum+=$5} END{print sum;}'
+    )"
+    if [ -n "$base" ]; then
+        echo "$base" | \
+            numfmt --to=iec-i --suffix=B --format='%9.2f' | \
+            sed -e 's/\s*//g'
+    else
+        echo "0.00B"
+    fi
+}
 # Defaults
 b_force=false
 installation_f="/$HOME/.knoxarch"
+global_installation_f="/usr/share/knoxarch"
 
+# Development
+installation_f="$(pwd)"
 # Arguments
 while [ $# -gt 0 ]; do
     case $1 in
@@ -20,22 +39,50 @@ while [ $# -gt 0 ]; do
             b_force=true
             shift
             ;;
+        --help|-h)
+            usage && exit 0
+            ;;
         *)
-            usage && exit 1
+            printf "\x1b[31mArgumento Inválido!\x1b[0m\n" && \
+                usage && exit 1
             ;;
     esac
 done
 
 # Main
+
+cache_s="$(get_yaycache)"
 if [ b_force == true ]; then
-    cd $installation_f && git pull && cd -
+    # Update the repo
+    if [ -d "$installation_f" ]; then
+        cd "$installation_f" && \
+            git pull >/dev/null
+        cd -
+    elif [ -d "$global_installation_f" ]; then
+        cd "$global_installation_f" && \
+            git pull >/dev/null
+        cd -
+    fi
+    # Update System
     yay -Syyuu --noconfirm && \
         paccache -r -k 1 && \
-        echo -e "N\nN\n\Y\n" | yay -Scc
+        echo -e "N\nN\nY" | yay -Scc >/dev/null && \
+        echo -e "\x1b[32mRemoved \x1b[33m${cache_s}\x1b[32m of aur package cache files.\x1b[00m"
 else
-    cd $installation_f && git pull && cd -
+    # Update the repo
+    if [ -d "$installation_f" ]; then
+        cd "$installation_f" && \
+            git pull >/dev/null
+        cd -
+    elif [ -d "$global_installation_f" ]; then
+        cd "$global_installation_f" && \
+            git pull >/dev/null
+        cd -
+    fi
+    # Update System
     yay -Syyuu && \
         paccache -r -k 1 && \
-        echo -e "N\nN\n\Y\n" | yay -Scc
+        echo -e "N\nN\nY" | yay -Scc >/dev/null && \
+        echo -e "\x1b[32mRemoved \x1b[33m${cache_s}\x1b[32m of aur package cache files.\x1b[00m"
 fi
 echo "Finished!"
