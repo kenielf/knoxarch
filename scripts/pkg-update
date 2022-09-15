@@ -5,7 +5,7 @@ VER="1.0.0"
 
 # Functions
 usage() {
-    printf "\x1b[34m${VER}\x1b[0m: ${0} [--force | -f]\n"
+    printf "\x1b[34m%s\x1b[0m: %s [--force | -f]\n" "${VER}" "${0}"
     printf " --force\tForces the confirmation queries\n"
     printf "  -f\t\tSame as -f\n"
     printf "Created by Chrystian M. F.\n"
@@ -52,16 +52,16 @@ done
 # Main
 
 cache_s="$(get_yaycache)"
-if [ b_force == true ]; then
+if [ $b_force = true ]; then
     # Update the repo
     if [ -d "$installation_f" ]; then
         cd "$installation_f" && \
             git pull >/dev/null
-        cd -
+        cd - || exit
     elif [ -d "$global_installation_f" ]; then
         cd "$global_installation_f" && \
             git pull >/dev/null
-        cd -
+        cd - || exit
     fi
     # Update System
     yay -Syyuu --noconfirm && \
@@ -73,11 +73,11 @@ else
     if [ -d "$installation_f" ]; then
         cd "$installation_f" && \
             git pull >/dev/null
-        cd -
+        cd - || exit
     elif [ -d "$global_installation_f" ]; then
         cd "$global_installation_f" && \
             git pull >/dev/null
-        cd -
+        cd - || exit
     fi
     # Update System
     yay -Syyuu && \
