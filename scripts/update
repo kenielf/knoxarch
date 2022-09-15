@@ -1,0 +1,41 @@
+#!/usr/bin/sh
+# vi: ft=sh
+# By Chrystian "Kenielf"
+VER="0.0.1"
+
+# Functions
+usage() {
+    printf "\x1b[2K$0: Version ${VER}\n"
+    printf "Created by Chrystian M. F."
+}
+
+# Defaults
+b_force=false
+installation_f="/$HOME/.knoxarch"
+
+# Arguments
+while [ $# -gt 0 ]; do
+    case $1 in
+        --force|-f)
+            b_force=true
+            shift
+            ;;
+        *)
+            usage && exit 1
+            ;;
+    esac
+done
+
+# Main
+if [ b_force == true ]; then
+    cd installation_f && git pull && cd -
+    yay -Syyuu --noconfirm && \
+        paccache -r -k 1 && \
+        echo -e "N\nN\n\Y\n" | yay -Scc
+else
+    cd installation_f && git pull && cd -
+    yay -Syyuu && \
+        paccache -r -k 1 && \
+        echo -e "N\nN\n\Y\n" | yay -Scc
+fi
+echo "Finished!"
