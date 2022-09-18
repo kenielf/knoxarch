@@ -12,20 +12,13 @@ usage() {
 }
 
 get_yaycache() {
-    files="$(ls -la "$HOME/.cache/yay")"
-    base="$(
-    echo "${files}" | \
-        grep -vE "completion.cache|vcs.json|\.$" | \
-        tail +2 | awk '{sum+=$5} END{print sum;}'
-    )"
-    if [ -n "$base" ]; then
-        echo "$base" | \
-            numfmt --to=iec-i --suffix=B --format='%9.2f' | \
-            sed -e 's/\s*//g'
-    else
-        echo "0.00B"
-    fi
+    du -bc $HOME/.cache/yay/* --exclude="completion.cache" --exclude="vcs.json" | \
+        tail -n1 | \
+        awk '{print $1}' | \
+        numfmt --to=iec-i --suffix=B --format='%9.2f' | \
+        tr -d ' '
 }
+
 # Defaults
 b_force=false
 installation_f="/$HOME/.knoxarch"
