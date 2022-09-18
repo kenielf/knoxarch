@@ -66,8 +66,8 @@ if [ $b_force = true ]; then
     # Update System
     yay -Syyuu --noconfirm && \
         paccache -r -k 1 && \
-        echo -e "N\nN\nY" | yay -Scc >/dev/null && \
-        echo -e "\x1b[32mRemoved \x1b[33m${cache_s}\x1b[32m of aur package cache files.\x1b[00m"
+        printf "N\nN\nY" | yay -Scc >/dev/null && \
+        printf "\x1b[32mRemoved \x1b[33m%s\x1b[32m of aur package cache files.\x1b[00m\n" "${cache_s}"
 else
     # Update the repo
     if [ -d "$installation_f" ]; then
@@ -82,7 +82,6 @@ else
     # Update System
     yay -Syyuu && \
         paccache -r -k 1 && \
-        echo -e "N\nN\nY" | yay -Scc >/dev/null && \
-        echo -e "\x1b[32mRemoved \x1b[33m${cache_s}\x1b[32m of aur package cache files.\x1b[00m"
+        printf "N\nN\nY" | yay -Scc >/dev/null && \
+        printf "\x1b[32mRemoved \x1b[33m%s\x1b[32m of aur package cache files.\x1b[00m\n" "${cache_s}"
 fi
-echo "Finished!"
